@@ -79,6 +79,8 @@ check_errors <- rbind(count_data %>% filter_at(vars(starts_with("writer_")),any_
 count_data <- count_data %>% filter_at(vars(starts_with("writer_")),all_vars(. != "")) #drop all writers missing some information
 count_data <- count_data %>% filter(writer_nationality != "Female") #Robert Hull from 2016 production of Empire
 
+count_data$theatre_region[count_data$theatre_region == "Pacific Northwest" & count_data$theatre_city == "Atlanta"] <- "Deep South"
+
 count_data <- count_data %>% group_by(production_title,theatre_name,theatre_season,theatre_city) %>% 
   mutate(num_writers = n(),
          weight = 1/num_writers) %>% #update number of writers and race for above drop rules 
@@ -89,6 +91,9 @@ str_detect_any <- function(string,pattern){
   sapply(X = pattern,FUN = str_detect,string = string) %>% apply(MARGIN = 1,max) %>% as.logical()
 }
 str_detect_any(c("AA","BB","C","d"),c("A","C"))
+
+#trim all strings
+count_data <- count_data %>% mutate_if(is.character,str_trim)
 
 count_data <- count_data %>% mutate(writer_race = case_when(str_detect(writer_race,"(w|W)hite") ~ "white",
                                                             str_detect(writer_race,"Whtie") ~ "white", 
@@ -106,12 +111,12 @@ count_data <- count_data %>% mutate(writer_nationality = case_when(str_detect(wr
                                                                    str_detect(writer_nationality,"Amerian") ~ "american",
                                                                    TRUE ~ writer_nationality))
 #should La Mirada %>% LA, Skokie %>% Chicago?
-count_data <- count_data %>% mutate(theatre_city = str_trim(theatre_city),
-                                    theatre_city = case_when(str_detect(theatre_city,"^Washington") ~ "Washington DC",
+count_data <- count_data %>% mutate(theatre_city = case_when(str_detect(theatre_city,"^Washington") ~ "Washington DC",
                                                              str_detect_any(theatre_city,c("Saint Paul","St\\. Paul","Minneapolis")) ~ "Minneapolis/St. Paul",
                                                              str_detect(theatre_city,"New York") ~ "New York City",
                                                              str_detect_any(theatre_city,c("Berkeley","San Francisco")) ~ "Berkeley/San Francisco",
-                                                             str_detect_any(theatre_city,"La Miranda") ~ "La Mirda",
+                                                             str_detect_any(theatre_city,"La Miranda") ~ "La Mirada",
+                                                             str_detect_any(theatre_city,"Fort Meyers") ~ "Fort Myers",
                                                              #str_detect(theatre_city,"Skokie") ~ "Chicago",
                                                              #str_detect(theatre_city,"La Mirada") ~ "Los Angeles",
                                                              TRUE ~ theatre_city))
