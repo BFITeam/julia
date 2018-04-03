@@ -134,8 +134,8 @@ count_freq_table <- function(group_vars,unique_level = "production",proportion_v
   
   #subset to unique counts of unique_vars
   if(unique_level == "writer"){
-    #remove duplicates by year-name
-    data <- data %>% group_by(theatre_season,writer_name) %>% filter(row_number() == 1) %>% ungroup()
+    #remove duplicates by year-name-grouping varaibles
+    data <- data %>% group_by_at(vars(one_of(c(group_vars)),starts_with("writer_"))) %>% filter(row_number() == 1) %>% ungroup()
     data$weight <- 1 #don't use weights for unique writer counts
   } else if(unique_level == "production"){
     #data already formated
@@ -147,6 +147,8 @@ count_freq_table <- function(group_vars,unique_level = "production",proportion_v
   data <- data %>% group_by_at(vars(one_of(group_vars)))
   summary <- data %>% summarise(count = sum(weight)) %>% ungroup()
   summary <- summary %>% group_by_at(vars(one_of(proportion_vars))) %>% mutate(percentage = count/sum(count))
+  
+  fwrite(summary,file = str_c("output/",unique_level,"s_by_",str_c(group_vars,collapse = "_and_"),".csv"),row.names = F)
   summary
 }
 
