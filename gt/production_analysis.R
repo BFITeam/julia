@@ -152,11 +152,26 @@ count_freq_table <- function(group_vars,unique_level = "production",proportion_v
   summary
 }
 
+#production level
 count_freq_table(c("theatre_season","writer_nationality"),"production")
 count_freq_table(c("theatre_season","writer_race"),"production")
 count_freq_table(c("theatre_season","writer_gender"),"production")
 count_freq_table(c("theatre_season","writer_race","writer_gender"),"production")
 
+#writer level
 count_freq_table(c("theatre_season","writer_gender"),"writer")
+count_freq_table(c("theatre_season","writer_race"),"writer")
+count_freq_table(c("theatre_season","writer_gender","writer_race"),"writer")
 
+#the three writers by gender and race tables
+count_freq_table(c("theatre_season","writer_gender","writer_race","writer_nationality"),"writer")
+
+#regions
 count_freq_table(c("theatre_season","theatre_region","writer_gender"),"writer",proportion_vars = "theatre_region")
+count_freq_table(c("theatre_season","theatre_region","writer_race"),"writer",proportion_vars = "theatre_region")
+
+#city-level
+cities <- c("Portland","Los Angeles","Minneapolis/St. Paul","Seattle","New York City","Berkeley/San Francisco","Philadelphia","Kansas City","Washington DC","Chicago")
+count_freq_table(c("theatre_season","theatre_city","writer_gender","writer_race"),"writer","theatre_city",data = count_data %>% filter(theatre_city %in% cities))
+
+fwrite(count_data,file = "output/count_data_unqiue_production_writer.csv",row.names = F)
