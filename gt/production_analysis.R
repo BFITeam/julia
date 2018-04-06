@@ -158,6 +158,10 @@ count_freq_table(c("theatre_season","writer_race"),"production")
 count_freq_table(c("theatre_season","writer_gender"),"production")
 count_freq_table(c("theatre_season","writer_race","writer_gender"),"production")
 
+count_freq_table(c("theatre_season","new_play_or_revival","writer_gender"),"production",proportion_vars = "new_play_or_revival")
+count_freq_table(c("theatre_season","new_play_or_revival","writer_race"),"production",proportion_vars = "new_play_or_revival")
+count_freq_table(c("theatre_season","new_play_or_revival","writer_race","writer_gender"),"production",proportion_vars = "new_play_or_revival")
+
 #writer level
 count_freq_table(c("theatre_season","writer_gender"),"writer")
 count_freq_table(c("theatre_season","writer_race"),"writer")
